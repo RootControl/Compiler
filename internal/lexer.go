@@ -35,7 +35,7 @@ func (l *Lexer) NextChar() {
 	}
 }
 
-func (l *Lexer) PeekNext() byte {
+func (l Lexer) PeekNext() byte {
 	if l.CurrentPosition + 1 >= l.SourceCodeLenght {
 		return '\n'
 	}

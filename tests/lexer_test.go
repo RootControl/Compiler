@@ -43,3 +43,19 @@ func TestLexerNextChar(t *testing.T) {
 		t.Errorf("Test failed: lexer did not move to the next char. \nValue: %v", lexer)
 	}
 }
+
+func TestLexerPeekNext(t *testing.T) {
+	sourceCode := "testing source code"
+	lexer, err := internal.NewLexer(sourceCode)
+
+	if err != nil {
+		t.Errorf("Test failed: %v", err)
+		return
+	}
+
+	if lexer.PeekNext() == sourceCode[1] {
+		fmt.Printf("Test Passed: lexer peeked the next char")
+	} else {
+		t.Errorf("Test failed: lexer did not peek the next char. \nValue: %v", lexer)
+	}
+}
