@@ -8,36 +8,36 @@ type Lexer struct {
 	SourceCode string
 	SourceCodeLenght uint
 	CurrentPosition uint 
-	CurrentChar rune
+	CurrentChar byte
 }
 
 func NewLexer(sourceCode string) (Lexer, error) {
 	if sourceCode == "" {
-		return nil, fmt.Error("No source code was provided.")
+		return Lexer{}, fmt.Errorf("No source code was provided.")
 	}
 
 	return Lexer {
-		SourceCode: sourceCode + '\0',
-		SourceCodeLenght: len(sourceCode)
+		SourceCode: sourceCode + "\n",
+		SourceCodeLenght: uint(len(sourceCode)),
 		CurrentPosition: 0,
-		CurrentChar: rune(sourceCode[0]),
+		CurrentChar: sourceCode[0],
 	},
 	nil
 }
 
-func (l Lexer) nextChar() {
+func (l *Lexer) NextChar() {
 	l.CurrentPosition++
 
 	if l.CurrentPosition >= l.SourceCodeLenght {
-		l.CurrentChar = '\0'
+		l.CurrentChar = '\n'
 	} else {
 		l.CurrentChar = l.SourceCode[l.CurrentPosition]
 	}
 }
 
-func (l Lexer) peekNext() rune {
+func (l *Lexer) PeekNext() byte {
 	if l.CurrentPosition + 1 >= l.SourceCodeLenght {
-		return '\0'
+		return '\n'
 	}
 
 	return l.SourceCode[l.CurrentPosition+1]
