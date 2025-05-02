@@ -33,15 +33,12 @@ func (l *Lexer) nextChar() {
 		l.CurrentChar = "\\0"
 	} else {
 		l.CurrentChar = fmt.Sprintf("%c", l.SourceCode[l.CurrentPosition])
-		// fmt.Println("----------")
-		// fmt.Printf("Current Char: %v\n", l.CurrentChar)
-		// fmt.Println("----------")
 	}
 }
 
 func (l *Lexer) peekNext() string {
 	if l.CurrentPosition + 1 >= l.SourceCodeLenght {
-		return "\n"
+		return "\\0"
 	}
 
 	return fmt.Sprintf("%c", l.SourceCode[l.CurrentPosition + 1])
@@ -64,9 +61,25 @@ func (l *Lexer) skipComment() {
 	}
 }
 
+func (l *Lexer) GetValueBetweenFlag(flag string) (string, error) {
+	if flag == "" {
+		return "", fmt.Errorf("no flag specified")
+	}
+
+	value := ""
+	l.nextChar()
+
+	for l.CurrentChar != flag {
+		value += l.CurrentChar
+		l.nextChar()
+	}
+
+	return value, nil
+}
+
 func (l *Lexer) GetToken() (Token, error) {
-	l.skipWhitespace()
 	l.skipComment()
+	l.skipWhitespace()
 
 	var enumType int32
 
@@ -119,6 +132,15 @@ func (l *Lexer) GetToken() (Token, error) {
 		}
 	case "\\0":
 		enumType = enums.EOF
+	case "\"":
+		value, err := l.GetValueBetweenFlag("\"")
+		if err != nil {
+			enumType = enums.ERROR
+		} else {
+			enumType = enums.String
+			l.nextChar()
+			l.CurrentChar = value
+		}
 	default:
 		enumType = enums.ERROR
 	}
