@@ -16,7 +16,7 @@ func TestLexerCreation(t *testing.T) {
 		return
 	}
 
-	if lexer.SourceCodeLenght == uint(len(sourceCode)) &&
+	if lexer.SourceCodeLenght == uint32(len(sourceCode)) &&
 		lexer.CurrentPosition == 0 &&
 		lexer.CurrentChar == sourceCode[0] {
 			fmt.Printf("Test Passed: lexer created with the default values")

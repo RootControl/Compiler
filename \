@@ -1,0 +1,71 @@
+package internal
+
+import (
+	"fmt"
+	"github.com/RootControl/Compiler/internal/enums"
+)
+
+type Lexer struct {
+	SourceCode string
+	SourceCodeLenght uint32
+	CurrentPosition uint32 
+	CurrentChar byte
+}
+
+func NewLexer(sourceCode string) (*Lexer, error) {
+	if sourceCode == "" {
+		return &Lexer{}, fmt.Errorf("No source code was provided.")
+	}
+
+	return &Lexer {
+		SourceCode: sourceCode + "\n",
+		SourceCodeLenght: uint32(len(sourceCode)),
+		CurrentPosition: 0,
+		CurrentChar: sourceCode[0],
+	},
+	nil
+}
+
+func (l *Lexer) NextChar() {
+	l.CurrentPosition++
+
+	if l.CurrentPosition >= l.SourceCodeLenght {
+		l.CurrentChar = '\n'
+	} else {
+		l.CurrentChar = l.SourceCode[l.CurrentPosition]
+	}
+}
+
+func (l Lexer) PeekNext() byte {
+	if l.CurrentPosition + 1 >= l.SourceCodeLenght {
+		return '\n'
+	}
+
+	return l.SourceCode[l.CurrentPosition+1]
+}
+
+func (l Lexer) GetToken() (Token, error) {
+	var enumType int32
+
+	switch l.CurrentChar {
+	case '+':
+		enumType = enums.Plus
+	case '-':
+		enumType = enums.Minus
+	case '*':
+		enumType = enums.Asterisk
+	case '/':
+		enumType = enums.Slash
+	case '\n':
+		enumType = enums.NewLine
+	default:
+		enumType = enums.ERROR
+	}
+
+	token, err := NewToken(l.CurrentChar, enumType)
+	if err != nil {
+		return token, fmt.Errorf("Unable to create a token, because: %v", err)
+	}
+	
+	return token, nil
+}
